@@ -7,12 +7,23 @@
     <meta name="keywords" content="Portfolio, Laravel Developer, Full Stack Developer, Web Developer, UI/UX Designer, PHP, Bootstrap, JavaScript">
     <meta name="author" content="[Nama Anda]">
     
-    <!-- Open Graph Meta -->
-    <meta property="og:title" content="Portofolio Pribadi | [Nama Anda]">
-    <meta property="og:description" content="Certified Web Developer & S1 Sistem Informasi. Portofolio proyek pengembangan web dengan Laravel & Bootstrap.">
+    <!-- Open Graph Meta (untuk preview di WhatsApp, Facebook, dll) -->
+    <meta property="og:title" content="Bernard Subur | Web Developer & UI/UX Designer">
+    <meta property="og:description" content="Portofolio Bernard Subur - Full Stack Laravel Developer & UI/UX Designer. Lulusan S1 Sistem Informasi.">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="{{ url('/') }}">
-    <meta property="og:image" content="{{ asset('images/profile/og-image.jpg') }}">
+    <meta property="og:url" content="https://bernardsubur.github.io/portofolio/">
+    <meta property="og:image" content="https://bernardsubur.github.io/portofolio/images/profile/og-image.png">
+    <meta property="og:image:width" content="1024">
+    <meta property="og:image:height" content="512">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:site_name" content="Bernard Subur Portfolio">
+    <meta property="og:locale" content="id_ID">
+
+    <!-- Twitter Card (juga dipakai WhatsApp sebagai fallback) -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Bernard Subur | Web Developer & UI/UX Designer">
+    <meta name="twitter:description" content="Portofolio Bernard Subur - Full Stack Laravel Developer & UI/UX Designer.">
+    <meta name="twitter:image" content="https://bernardsubur.github.io/portofolio/images/profile/og-image.png">
 
     <title>Bernard Subur</title>
     <link rel="icon" type="image/jpeg" href="{{ asset('images/favicon-profile.jpg') }}">
