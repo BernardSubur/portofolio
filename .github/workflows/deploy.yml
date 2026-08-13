@@ -79,6 +79,16 @@ jobs:
           echo "=== Isi .env yang relevan ==="
           grep -E "^(APP_URL|ASSET_URL|SESSION_DRIVER|CACHE)" .env
 
+      - name: Prepare Laravel storage
+        run: |
+          # Buat semua folder storage yang dibutuhkan Laravel
+          mkdir -p storage/framework/sessions
+          mkdir -p storage/framework/views
+          mkdir -p storage/framework/cache/data
+          mkdir -p storage/logs
+          chmod -R 775 storage bootstrap/cache
+          echo "Storage directories created."
+
       - name: Clear Laravel cache
         run: |
           php artisan config:clear
@@ -88,22 +98,31 @@ jobs:
       - name: Start Laravel server
         run: |
           php artisan serve --host=127.0.0.1 --port=8000 > /tmp/laravel.log 2>&1 &
-          # Tunggu server benar-benar siap menerima koneksi
+          echo "Laravel server starting..."
+          # Tunggu sampai server benar-benar siap (maksimal 30 detik)
           for i in {1..15}; do
             STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8000/ 2>/dev/null)
             if [[ "$STATUS" == "200" || "$STATUS" == "301" || "$STATUS" == "302" ]]; then
               echo "Server ready! HTTP status: $STATUS (attempt $i)"
               break
             fi
-            echo "Waiting for server... attempt $i/15 (status: $STATUS)"
+            echo "Waiting... attempt $i/15 (status: $STATUS)"
             sleep 2
           done
+          # Tampilkan log server untuk debug jika ada masalah
+          echo "=== Laravel server log ==="
+          cat /tmp/laravel.log
 
       - name: Generate static HTML
         run: |
           mkdir -p dist
-          curl -f -L http://127.0.0.1:8000/ -o dist/index.html
-          echo "=== 80 baris pertama index.html (cek path asset): ==="
+          # Ambil halaman, jika gagal tampilkan detail error
+          if ! curl -f -L http://127.0.0.1:8000/ -o dist/index.html; then
+            echo "=== CURL GAGAL - Laravel server log: ==="
+            cat /tmp/laravel.log
+            exit 1
+          fi
+          echo "=== Berhasil! 80 baris pertama index.html ==="
           head -80 dist/index.html
 
       - name: Copy public assets to dist
