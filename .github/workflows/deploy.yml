@@ -49,7 +49,14 @@ jobs:
         run: |
           cp .env.example .env
           php artisan key:generate
-          echo "SESSION_DRIVER=file" >> .env
+           sed -i '/^SESSION_DRIVER=/d' .env
+           echo "SESSION_DRIVER=file" >> .env
+           sed -i '/^DB_CONNECTION=/d' .env
+           echo "DB_CONNECTION=sqlite" >> .env
+      - name: Clear Laravel configuration
+        run: |
+          php artisan config:clear
+          php artisan cache:clear
 
       - name: Start Laravel server
         run: |
