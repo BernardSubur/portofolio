@@ -61,7 +61,7 @@ jobs:
       - name: Clear Laravel configuration
         run: |
           php artisan config:clear
-          
+
       - name: Start Laravel server
         run: |
           php artisan serve --host=127.0.0.1 --port=8000 > /tmp/laravel.log 2>&1 &
@@ -86,7 +86,6 @@ jobs:
         run: |
           sed -i 's|href="/|href="./|g' dist/index.html
           sed -i 's|src="/|src="./|g' dist/index.html
-          sed -i 's|url(/|url(./|g' dist/index.html
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
