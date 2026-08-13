@@ -20,45 +20,47 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # ─── 1. Checkout ───────────────────────────────────────────────────────
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # ─── 2. Setup PHP ──────────────────────────────────────────────────────
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
-          extensions: mbstring, xml, ctype, iconv, intl
+          extensions: mbstring, xml, ctype, iconv, intl, pdo, tokenizer
           coverage: none
 
+      # ─── 3. Install PHP dependencies ───────────────────────────────────────
       - name: Install Composer dependencies
-        run: composer install --no-dev --optimize-autoloader
+        run: composer install --no-dev --optimize-autoloader --no-interaction
 
+      # ─── 4. Setup Node.js ──────────────────────────────────────────────────
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: 20
           cache: npm
 
+      # ─── 5. Install & Build frontend ───────────────────────────────────────
       - name: Install NPM dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Build frontend assets
+      - name: Build frontend assets (Vite + Tailwind)
         run: npm run build
 
-      - name: Prepare Laravel environment
+      # ─── 6. Setup Laravel environment ──────────────────────────────────────
+      - name: Setup Laravel .env
         run: |
           cp .env.example .env
-          php artisan key:generate
 
-          # Set session/cache ke file-based (tidak butuh database)
-          sed -i '/^SESSION_DRIVER=/d' .env
-          echo "SESSION_DRIVER=file" >> .env
-          sed -i '/^CACHE_STORE=/d' .env
-          echo "CACHE_STORE=file" >> .env
-          sed -i '/^CACHE_DRIVER=/d' .env
-          echo "CACHE_DRIVER=file" >> .env
+          # Pastikan semua driver menggunakan file (tidak butuh database)
+          sed -i 's/^SESSION_DRIVER=.*/SESSION_DRIVER=file/' .env
+          sed -i 's/^CACHE_STORE=.*/CACHE_STORE=file/' .env
+          sed -i 's/^QUEUE_CONNECTION=.*/QUEUE_CONNECTION=sync/' .env
 
-          # Nonaktifkan database sepenuhnya
+          # Hapus semua konfigurasi database
           sed -i '/^DB_CONNECTION=/d' .env
           sed -i '/^DB_HOST=/d' .env
           sed -i '/^DB_PORT=/d' .env
@@ -66,83 +68,121 @@ jobs:
           sed -i '/^DB_USERNAME=/d' .env
           sed -i '/^DB_PASSWORD=/d' .env
 
-          # Set APP_URL ke GitHub Pages URL (base URL aplikasi)
-          sed -i '/^APP_URL=/d' .env
-          echo "APP_URL=https://bernardsubur.github.io/portofolio" >> .env
-
-          # KUNCI UTAMA: ASSET_URL adalah variabel yang benar-benar mengontrol
-          # output fungsi asset() di Laravel. Dengan ini, asset('css/style.css')
-          # pasti menghasilkan: https://bernardsubur.github.io/portofolio/css/style.css
-          sed -i '/^ASSET_URL=/d' .env
+          # Set URL untuk GitHub Pages
+          sed -i 's|^APP_URL=.*|APP_URL=https://bernardsubur.github.io/portofolio|' .env
           echo "ASSET_URL=https://bernardsubur.github.io/portofolio" >> .env
 
-          echo "=== Isi .env yang relevan ==="
-          grep -E "^(APP_URL|ASSET_URL|SESSION_DRIVER|CACHE)" .env
+          # Set environment ke local agar tidak butuh HTTPS
+          sed -i 's/^APP_ENV=.*/APP_ENV=local/' .env
+          sed -i 's/^APP_DEBUG=.*/APP_DEBUG=true/' .env
 
-      - name: Prepare Laravel storage
+          echo "=== Konfigurasi .env yang aktif ==="
+          grep -E "^(APP_URL|APP_ENV|ASSET_URL|SESSION_DRIVER|CACHE_STORE|QUEUE_CONNECTION)" .env
+
+      # ─── 7. Generate app key ───────────────────────────────────────────────
+      - name: Generate application key
+        run: php artisan key:generate --force
+
+      # ─── 8. Buat folder storage ───────────────────────────────────────────
+      - name: Create storage directories
         run: |
-          # Buat semua folder storage yang dibutuhkan Laravel
           mkdir -p storage/framework/sessions
           mkdir -p storage/framework/views
           mkdir -p storage/framework/cache/data
+          mkdir -p storage/app/public
           mkdir -p storage/logs
-          chmod -R 775 storage bootstrap/cache
-          echo "Storage directories created."
+          mkdir -p bootstrap/cache
+          chmod -R 777 storage bootstrap/cache
+          echo "OK: Semua folder storage sudah dibuat."
 
+      # ─── 9. Clear cache ───────────────────────────────────────────────────
       - name: Clear Laravel cache
         run: |
           php artisan config:clear
-          php artisan cache:clear
           php artisan view:clear
+          php artisan cache:clear
+          echo "OK: Cache dibersihkan."
 
+      # ─── 10. Test artisan bisa jalan ──────────────────────────────────────
+      - name: Verify Laravel can boot
+        run: |
+          php artisan about --only=environment 2>&1 || true
+          echo "Artisan check done."
+
+      # ─── 11. Jalankan Laravel server ──────────────────────────────────────
       - name: Start Laravel server
         run: |
           php artisan serve --host=127.0.0.1 --port=8000 > /tmp/laravel.log 2>&1 &
-          echo "Laravel server starting..."
-          # Tunggu sampai server benar-benar siap (maksimal 30 detik)
-          for i in {1..15}; do
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8000/ 2>/dev/null)
-            if [[ "$STATUS" == "200" || "$STATUS" == "301" || "$STATUS" == "302" ]]; then
-              echo "Server ready! HTTP status: $STATUS (attempt $i)"
+          SERVER_PID=$!
+          echo "Laravel PID: $SERVER_PID"
+
+          # Tunggu server siap (max 40 detik)
+          echo "Menunggu server siap..."
+          READY=false
+          for i in {1..20}; do
+            sleep 2
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8000/ 2>/dev/null || echo "000")
+            echo "  Percobaan $i/20 → HTTP $STATUS"
+            if [[ "$STATUS" == "200" ]]; then
+              READY=true
+              echo "Server SIAP! (HTTP 200)"
               break
             fi
-            echo "Waiting... attempt $i/15 (status: $STATUS)"
-            sleep 2
           done
-          # Tampilkan log server untuk debug jika ada masalah
-          echo "=== Laravel server log ==="
-          cat /tmp/laravel.log
 
-      - name: Generate static HTML
-        run: |
-          mkdir -p dist
-          # Ambil halaman, jika gagal tampilkan detail error
-          if ! curl -f -L http://127.0.0.1:8000/ -o dist/index.html; then
-            echo "=== CURL GAGAL - Laravel server log: ==="
+          if [[ "$READY" != "true" ]]; then
+            echo "=== SERVER GAGAL SIAP - Log Laravel: ==="
             cat /tmp/laravel.log
             exit 1
           fi
-          echo "=== Berhasil! 80 baris pertama index.html ==="
-          head -80 dist/index.html
 
-      - name: Copy public assets to dist
+      # ─── 12. Generate HTML statis ─────────────────────────────────────────
+      - name: Generate static HTML from Laravel
         run: |
-          cp -r public/css dist/css
-          cp -r public/js dist/js
-          cp -r public/images dist/images
-          cp -r public/build dist/build 2>/dev/null || echo "Tidak ada folder build"
-          cp -r public/cv dist/cv 2>/dev/null || echo "Tidak ada folder cv"
-          cp public/favicon.ico dist/favicon.ico 2>/dev/null || true
-          cp public/robots.txt dist/robots.txt 2>/dev/null || true
+          mkdir -p dist
 
-      - name: Verify dist structure
+          echo "Mengambil halaman dari Laravel..."
+          HTTP_CODE=$(curl -s -o dist/index.html -w "%{http_code}" http://127.0.0.1:8000/)
+
+          if [[ "$HTTP_CODE" != "200" ]]; then
+            echo "ERROR: Server mengembalikan HTTP $HTTP_CODE"
+            echo "=== Laravel log ==="
+            cat /tmp/laravel.log
+            echo "=== Response yang diterima ==="
+            cat dist/index.html 2>/dev/null | head -50
+            exit 1
+          fi
+
+          echo "OK: HTML berhasil dibuat (HTTP $HTTP_CODE)"
+          echo ""
+          echo "=== Cek path asset di HTML ==="
+          grep -E "(stylesheet|href=|src=)" dist/index.html | grep -v "^<!--" | head -20
+
+      # ─── 13. Copy semua asset statis ──────────────────────────────────────
+      - name: Copy static assets to dist
         run: |
-          echo "=== Semua file dalam dist: ==="
+          echo "Menyalin asset..."
+          cp -r public/css dist/css && echo "OK: css/"
+          cp -r public/js dist/js && echo "OK: js/"
+          cp -r public/images dist/images && echo "OK: images/"
+          [ -d public/build ] && cp -r public/build dist/build && echo "OK: build/" || echo "SKIP: build/ tidak ada"
+          [ -d public/cv ] && cp -r public/cv dist/cv && echo "OK: cv/" || echo "SKIP: cv/ tidak ada"
+          [ -f public/favicon.ico ] && cp public/favicon.ico dist/ && echo "OK: favicon.ico" || true
+          [ -f public/robots.txt ] && cp public/robots.txt dist/ && echo "OK: robots.txt" || true
+
+      # ─── 14. Verifikasi struktur dist ────────────────────────────────────
+      - name: Verify dist output
+        run: |
+          echo "=== Semua file dalam dist/ ==="
           find dist -type f | sort
           echo ""
-          echo "=== Verifikasi path CSS di HTML: ==="
-          grep -i "css/style" dist/index.html | head -5
+          echo "=== Ukuran total ==="
+          du -sh dist/
+          echo ""
+          echo "=== Verifikasi link CSS di index.html ==="
+          grep "css/style" dist/index.html | head -3
 
+      # ─── 15. Deploy ke GitHub Pages ───────────────────────────────────────
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
@@ -155,11 +195,9 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-
     runs-on: ubuntu-latest
     needs: build
-
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v4
