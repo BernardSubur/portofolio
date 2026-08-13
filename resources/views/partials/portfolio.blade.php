@@ -11,7 +11,7 @@
                 <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden hover-lift portfolio-card">
                     <div class="position-relative bg-light {{ isset($project['image']) ? '' : 'pt-4 px-4 text-center d-flex align-items-end justify-content-center' }}" style="height: 200px; overflow: hidden;">
                         @if(isset($project['image']))
-                            <img src="{{ $project['image'] }}" alt="{{ $project['name'] }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            <img src="{{ Str::startsWith($project['image'], 'http') ? $project['image'] : asset($project['image']) }}" alt="{{ $project['name'] }}" style="width: 100%; height: 100%; object-fit: cover;">
                         @else
                             <i class="bi bi-browser-chrome text-primary opacity-25" style="font-size: 8rem; margin-bottom: -20px;"></i>
                         @endif

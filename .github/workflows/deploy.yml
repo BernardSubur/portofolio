@@ -66,12 +66,18 @@ jobs:
           sed -i '/^DB_USERNAME=/d' .env
           sed -i '/^DB_PASSWORD=/d' .env
 
-          # KUNCI UTAMA: Set APP_URL ke GitHub Pages URL lengkap dengan subfolder.
-          # Ini membuat asset('css/style.css') menghasilkan:
-          # https://bernardsubur.github.io/portofolio/css/style.css
-          # sehingga browser bisa menemukan file CSS/JS dengan benar.
+          # Set APP_URL ke GitHub Pages URL (base URL aplikasi)
           sed -i '/^APP_URL=/d' .env
           echo "APP_URL=https://bernardsubur.github.io/portofolio" >> .env
+
+          # KUNCI UTAMA: ASSET_URL adalah variabel yang benar-benar mengontrol
+          # output fungsi asset() di Laravel. Dengan ini, asset('css/style.css')
+          # pasti menghasilkan: https://bernardsubur.github.io/portofolio/css/style.css
+          sed -i '/^ASSET_URL=/d' .env
+          echo "ASSET_URL=https://bernardsubur.github.io/portofolio" >> .env
+
+          echo "=== Isi .env yang relevan ==="
+          grep -E "^(APP_URL|ASSET_URL|SESSION_DRIVER|CACHE)" .env
 
       - name: Clear Laravel cache
         run: |
@@ -82,13 +88,14 @@ jobs:
       - name: Start Laravel server
         run: |
           php artisan serve --host=127.0.0.1 --port=8000 > /tmp/laravel.log 2>&1 &
-          # Tunggu server benar-benar siap
+          # Tunggu server benar-benar siap menerima koneksi
           for i in {1..15}; do
-            if curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8000/ | grep -qE "^(200|301|302)$"; then
-              echo "Server ready after ${i}x2 seconds"
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8000/ 2>/dev/null)
+            if [[ "$STATUS" == "200" || "$STATUS" == "301" || "$STATUS" == "302" ]]; then
+              echo "Server ready! HTTP status: $STATUS (attempt $i)"
               break
             fi
-            echo "Waiting for server... attempt ${i}/15"
+            echo "Waiting for server... attempt $i/15 (status: $STATUS)"
             sleep 2
           done
 
@@ -96,8 +103,8 @@ jobs:
         run: |
           mkdir -p dist
           curl -f -L http://127.0.0.1:8000/ -o dist/index.html
-          echo "=== index.html berhasil dibuat, cek path asset: ==="
-          grep -E "(stylesheet|\.css|\.js)" dist/index.html | head -15
+          echo "=== 80 baris pertama index.html (cek path asset): ==="
+          head -80 dist/index.html
 
       - name: Copy public assets to dist
         run: |

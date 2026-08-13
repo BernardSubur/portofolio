@@ -68,7 +68,7 @@ class HomeController extends Controller
                 'status' => 'Kerja Praktik/Magang',
                 'prototype_url' => 'https://www.figma.com/proto/3woblTnKpujcCkCo4BFsOb/PKL-DINKOMINFO?node-id=1-2&starting-point-node-id=1%3A2&t=o69YFxn6A63AHnb5-1',
                 'description' => 'Desain antarmuka (UI/UX) untuk Sistem Pengujian Kendaraan Bermotor (SIM PKB) Kabupaten Banyumas. Proyek ini bertujuan merancang antarmuka yang modern dan ramah pengguna untuk membuat tampilan website menjadi lebih menarik serta memudahkan pengelolaan data pengujian kendaraan. Silakan klik tombol Prototype di bawah untuk melihat desain interaktifnya secara langsung!',
-                'image' => asset('images/project/sim_pkb_prototype.png')
+                'image' => 'images/project/sim_pkb_prototype.png'
             ]
         ];
 
