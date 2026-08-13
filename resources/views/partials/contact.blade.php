@@ -13,7 +13,7 @@
                         <div class="row gy-4 text-center">
                             <!-- Email -->
                             <div class="col-6 col-md-3">
-                                <a href="mailto:emailanda@example.com" class="text-decoration-none text-body contact-link">
+                                <a href="mailto:bernardsubur@gmail.com" class="text-decoration-none text-body contact-link">
                                     <div class="contact-icon-box bg-primary-subtle text-primary rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center transition-all" style="width: 60px; height: 60px;">
                                         <i class="bi bi-envelope-fill fs-4"></i>
                                     </div>
@@ -23,7 +23,7 @@
                             </div>
                             <!-- LinkedIn -->
                             <div class="col-6 col-md-3">
-                                <a href="#" target="_blank" class="text-decoration-none text-body contact-link">
+                                <a href="https://www.linkedin.com/in/yosef-bernardus-janson-subur/" target="_blank" class="text-decoration-none text-body contact-link">
                                     <div class="contact-icon-box bg-primary-subtle text-primary rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center transition-all" style="width: 60px; height: 60px;">
                                         <i class="bi bi-linkedin fs-4"></i>
                                     </div>
@@ -33,7 +33,7 @@
                             </div>
                             <!-- GitHub -->
                             <div class="col-6 col-md-3">
-                                <a href="#" target="_blank" class="text-decoration-none text-body contact-link">
+                                <a href="https://github.com/BernardSubur" target="_blank" class="text-decoration-none text-body contact-link">
                                     <div class="contact-icon-box bg-primary-subtle text-primary rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center transition-all" style="width: 60px; height: 60px;">
                                         <i class="bi bi-github fs-4"></i>
                                     </div>
@@ -43,7 +43,7 @@
                             </div>
                             <!-- WhatsApp -->
                             <div class="col-6 col-md-3">
-                                <a href="https://wa.me/6281234567890" target="_blank" class="text-decoration-none text-body contact-link">
+                                <a href="https://wa.me/NOMOR_WA_ANDA" target="_blank" class="text-decoration-none text-body contact-link">
                                     <div class="contact-icon-box bg-success-subtle text-success rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center transition-all" style="width: 60px; height: 60px;">
                                         <i class="bi bi-whatsapp fs-4"></i>
                                     </div>
@@ -54,8 +54,8 @@
                         </div>
                         
                         <div class="text-center mt-5">
-                            <a href="mailto:emailanda@example.com" class="btn btn-primary btn-lg rounded-pill px-5 shadow hover-lift">
-                                <i class="bi bi-chat-dots-fill me-2"></i> Hubungi Saya
+                            <a href="https://wa.me/NOMOR_WA_ANDA" target="_blank" class="btn btn-success btn-lg rounded-pill px-5 shadow hover-lift">
+                                <i class="bi bi-whatsapp me-2"></i> Chat via WhatsApp
                             </a>
                         </div>
                     </div>

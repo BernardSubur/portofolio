@@ -16,7 +16,7 @@
                     <a href="#portfolio" class="btn btn-primary btn-lg rounded-pill px-4 shadow-sm hover-lift">
                         <i class="bi bi-briefcase me-2"></i> Lihat Proyek
                     </a>
-                    <a href="#" target="_blank" class="btn btn-outline-primary btn-lg rounded-pill px-4 shadow-sm hover-lift">
+                    <a href="https://www.linkedin.com/in/yosef-bernardus-janson-subur/" target="_blank" class="btn btn-outline-primary btn-lg rounded-pill px-4 shadow-sm hover-lift">
                         <i class="bi bi-linkedin me-2"></i> LinkedIn
                     </a>
                     <a href="{{ asset('cv/cv.pdf') }}" class="btn btn-dark btn-lg rounded-pill px-4 shadow-sm hover-lift" download>
