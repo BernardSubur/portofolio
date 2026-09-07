@@ -27,7 +27,7 @@
             <div class="col-lg-6 order-1 order-lg-2 text-center" data-aos="zoom-in" data-aos-delay="200" data-aos-duration="1200">
                 <div class="profile-image-container position-relative d-inline-block">
                     <div class="blob-bg position-absolute top-50 start-50 translate-middle"></div>
-                    <img src="{{ asset('images/profile/profile.png') }}" alt="Profile Picture" class="img-fluid profile-img position-relative z-1 floating-anim" loading="lazy" onerror="this.src='https://via.placeholder.com/400x400?text=Profile'">
+                    <img src="{{ asset('images/profile/profile.jpeg') }}" alt="Profile Picture" class="img-fluid profile-img position-relative z-1 floating-anim" loading="lazy" onerror="this.src='https://via.placeholder.com/400x400?text=Profile'">
                 </div>
             </div>
         </div>
