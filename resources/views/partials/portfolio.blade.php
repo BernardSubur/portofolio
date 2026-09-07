@@ -7,83 +7,27 @@
         
         <div class="row gy-4">
             @foreach($projects as $index => $project)
-            @if(isset($project['gallery']))
-            <!-- Full Width Project with Gallery -->
-            <div class="col-12" data-aos="fade-up" data-aos-delay="{{ $loop->iteration * 100 }}">
-                <div class="card border-0 shadow-sm rounded-4 overflow-hidden portfolio-card mb-2">
-                    <div class="card-body p-4 p-lg-5">
-                        <div class="d-flex justify-content-between align-items-start mb-3 flex-wrap gap-2">
-                            <div>
-                                <h4 class="fw-bold mb-1">{{ $project['name'] }}</h4>
-                                @if(isset($project['company']))
-                                <h6 class="text-primary mb-3">{{ $project['company'] }}</h6>
-                                @endif
-                            </div>
-                            <div class="d-flex gap-2">
-                                <span class="badge {{ $project['status'] == 'Live' ? 'bg-success' : 'bg-primary' }} rounded-pill px-3 py-2">{{ $project['status'] }}</span>
-                                <span class="badge bg-dark rounded-pill px-3 py-2">{{ $project['role'] }}</span>
-                            </div>
-                        </div>
-                        
-                        @if(isset($project['description']))
-                            @if(is_array($project['description']))
-                            <ul class="text-muted small ps-3 mb-4">
-                                @foreach($project['description'] as $desc)
-                                <li>{{ $desc }}</li>
-                                @endforeach
-                            </ul>
-                            @else
-                            <p class="text-muted small mb-4">{{ $project['description'] }}</p>
-                            @endif
-                        @endif
-
-                        @if(isset($project['tech']) || isset($project['tools']))
-                        <div class="mb-4">
-                            @if(isset($project['tech']))
-                                @foreach($project['tech'] as $tech)
-                                    <span class="badge bg-secondary-subtle text-secondary border rounded-pill me-1 mb-1 px-3 py-2">{{ $tech }}</span>
-                                @endforeach
-                            @endif
-                            @if(isset($project['tools']))
-                                @foreach($project['tools'] as $tool)
-                                    <span class="badge bg-secondary-subtle text-secondary border rounded-pill me-1 mb-1 px-3 py-2">{{ $tool }}</span>
-                                @endforeach
-                            @endif
-                        </div>
-                        @endif
-                        
-                        <h6 class="fw-bold mb-3 mt-4"><i class="bi bi-images text-primary me-2"></i>Project Gallery</h6>
-                        <div class="row gy-3">
-                            @foreach($project['gallery'] as $imgIndex => $item)
-                            <div class="col-12 col-md-6 col-lg-4">
-                                <div class="gallery-item position-relative rounded-3 overflow-hidden shadow-sm h-100" style="cursor: pointer;" onclick="openLightbox({{ $index }}, {{ $imgIndex }})">
-                                    <img src="{{ asset($item['image']) }}" alt="{{ $item['caption'] }}" class="img-fluid w-100 gallery-img" style="height: 220px; object-fit: cover; transition: transform 0.3s ease;">
-                                    <div class="gallery-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style="background: rgba(0,0,0,0.4); opacity: 0; transition: opacity 0.3s ease;">
-                                        <i class="bi bi-zoom-in text-white fs-1"></i>
-                                    </div>
-                                    <div class="position-absolute bottom-0 start-0 w-100 p-3 pt-4" style="background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);">
-                                        <p class="text-white mb-0 small fw-medium text-center">{{ $item['caption'] }}</p>
-                                    </div>
-                                </div>
-                            </div>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-            </div>
-            @else
-            <!-- Standard Project Card -->
             <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ $loop->iteration * 100 }}">
                 <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden hover-lift portfolio-card">
-                    <div class="position-relative bg-light {{ isset($project['image']) ? '' : 'pt-4 px-4 text-center d-flex align-items-end justify-content-center' }}" style="height: 200px; overflow: hidden;">
-                        @if(isset($project['image']))
+                    <div class="position-relative bg-light {{ isset($project['image']) || isset($project['gallery']) ? '' : 'pt-4 px-4 text-center d-flex align-items-end justify-content-center' }}" style="height: 200px; overflow: hidden;">
+                        @if(isset($project['gallery']))
+                            <div class="gallery-item w-100 h-100" style="cursor: pointer;" onclick="openLightbox({{ $index }}, 0)">
+                                <img src="{{ asset($project['gallery'][0]['image']) }}" alt="{{ $project['gallery'][0]['caption'] }}" class="w-100 h-100 gallery-img" style="object-fit: cover; transition: transform 0.3s ease;">
+                                <div class="gallery-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style="background: rgba(0,0,0,0.4); opacity: 0; transition: opacity 0.3s ease; pointer-events: none;">
+                                    <i class="bi bi-images text-white fs-1"></i>
+                                </div>
+                                <div class="position-absolute bottom-0 end-0 p-2 px-3 text-white" style="background: rgba(0,0,0,0.6); border-top-left-radius: 8px; pointer-events: none;">
+                                    <i class="bi bi-images me-1"></i> +{{ count($project['gallery']) - 1 }}
+                                </div>
+                            </div>
+                        @elseif(isset($project['image']))
                             <img src="{{ Str::startsWith($project['image'], 'http') ? $project['image'] : asset($project['image']) }}" alt="{{ $project['name'] }}" style="width: 100%; height: 100%; object-fit: cover;">
                         @else
                             <i class="bi bi-browser-chrome text-primary opacity-25" style="font-size: 8rem; margin-bottom: -20px;"></i>
                         @endif
-                        <div class="position-absolute top-0 start-0 w-100 p-3 d-flex justify-content-between">
-                            <span class="badge {{ $project['status'] == 'Live' ? 'bg-success' : 'bg-primary' }} rounded-pill">{{ $project['status'] }}</span>
-                            <span class="badge bg-dark rounded-pill">{{ $project['role'] }}</span>
+                        <div class="position-absolute top-0 start-0 w-100 p-3 d-flex justify-content-between" style="pointer-events: none;">
+                            <span class="badge {{ $project['status'] == 'Live' ? 'bg-success' : 'bg-primary' }} rounded-pill shadow-sm">{{ $project['status'] }}</span>
+                            <span class="badge bg-dark rounded-pill shadow-sm">{{ $project['role'] }}</span>
                         </div>
                     </div>
                     <div class="card-body p-4 d-flex flex-column">
@@ -117,6 +61,11 @@
                         @endif
                     </div>
                     <div class="card-footer bg-transparent border-0 p-4 pt-0 d-flex gap-2">
+                        @if(isset($project['gallery']))
+                        <button onclick="openLightbox({{ $index }}, 0)" class="btn btn-primary btn-sm flex-grow-1 rounded-pill">
+                            <i class="bi bi-images me-1"></i> View Gallery
+                        </button>
+                        @endif
                         @if(isset($project['demo_url']))
                         <a href="{{ $project['demo_url'] }}" class="btn btn-primary btn-sm flex-grow-1 rounded-pill" target="_blank">
                             <i class="bi bi-box-arrow-up-right me-1"></i> Live
@@ -135,7 +84,6 @@
                     </div>
                 </div>
             </div>
-            @endif
             @endforeach
         </div>
     </div>
