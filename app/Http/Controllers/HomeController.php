@@ -51,16 +51,25 @@ class HomeController extends Controller
                 'image' => 'https://satriatrainingcamp.my.id/asset/images/gambar-1.jpeg'
             ],
             [
-                'name' => 'Website PT Sumber Prima Mandiri',
+                'name' => 'Internal Production Management System',
+                'company' => 'PT Sumber Prima Mandiri',
                 'role' => 'Frontend Developer',
-                'status' => 'Kerja Praktik/Magang',
-                'tech' => ['HTML', 'CSS', 'JavaScript', 'Bootstrap'],
-                'description' => [
-                    'Responsive',
-                    'Frontend',
-                    'Landing Page'
+                'status' => 'Kerja Praktik / Magang',
+                'tech' => [
+                    'Frontend Development', 'Responsive Web Design', 'User Interface',
+                    'Authentication', 'Dashboard', 'Production Planning',
+                    'Request Management', 'Machine Management', 'Product Management',
+                    'Profile Management', 'Sidebar Navigation', 'Topbar Navigation'
                 ],
-                'github_url' => '#'
+                'description' => 'Berperan sebagai Frontend Developer dalam pengembangan Internal Production Management System untuk membantu proses pengelolaan produksi, request management, production planning, dan pengelolaan informasi pengguna. Berkontribusi dalam membangun dan mengimplementasikan antarmuka pengguna yang responsif, intuitif, dan konsisten.',
+                'gallery' => [
+                    ['image' => 'images/frontend/login.png', 'caption' => 'Login Page'],
+                    ['image' => 'images/frontend/addnew.png', 'caption' => 'Add New Machine'],
+                    ['image' => 'images/frontend/produk.png', 'caption' => 'Product Management'],
+                    ['image' => 'images/frontend/profil.png', 'caption' => 'Profile Page'],
+                    ['image' => 'images/frontend/sidebar.png', 'caption' => 'Sidebar Navigation'],
+                    ['image' => 'images/frontend/topbar.png', 'caption' => 'Topbar / Header']
+                ]
             ],
             [
                 'name' => 'UI UX Design Aplikasi Web SIM PKB Kabupaten Banyumas',
