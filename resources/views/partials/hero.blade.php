@@ -2,25 +2,15 @@
     <div class="container">
         <div class="row align-items-center gy-5">
             <div class="col-lg-6 order-2 order-lg-1">
-                <div class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2 mb-3 fw-medium" data-aos="fade-up" data-aos-delay="100">
-                    Selamat Datang
-                </div>
+
                 <h1 class="display-4 fw-bolder mb-2" data-aos="fade-up" data-aos-delay="200">Halo, saya <span class="text-primary">Yosef Bernardus Janson Subur</span>, S.Kom.</h1>
                 <h2 class="fs-3 text-secondary mb-4" style="min-height: 40px;" data-aos="fade-up" data-aos-delay="300">
                     <span id="typed-text"></span>
                 </h2>
-                <p class="lead mb-4 text-muted" style="max-width: 90%;" data-aos="fade-up" data-aos-delay="400">
-                    Lulusan Sistem Informasi yang fokus pada pengembangan aplikasi web. Memiliki kompetensi resmi dari BNSP serta pengalaman nyata mulai dari perancangan UI/UX di Figma, pengembangan Front-End, hingga implementasi Full-Stack menggunakan Laravel.
-                </p>
-                <div class="d-flex gap-3 flex-wrap mt-2" data-aos="fade-up" data-aos-delay="500">
+
+                <div class="d-flex gap-3 flex-wrap mt-2" data-aos="fade-up" data-aos-delay="400">
                     <a href="#portfolio" class="btn btn-primary btn-lg rounded-pill px-4 shadow-sm hover-lift">
                         <i class="bi bi-briefcase me-2"></i> Lihat Proyek
-                    </a>
-                    <a href="https://www.linkedin.com/in/yosef-bernardus-janson-subur/" target="_blank" class="btn btn-outline-primary btn-lg rounded-pill px-4 shadow-sm hover-lift">
-                        <i class="bi bi-linkedin me-2"></i> LinkedIn
-                    </a>
-                    <a href="{{ asset('cv/cv.pdf') }}" class="btn btn-dark btn-lg rounded-pill px-4 shadow-sm hover-lift" download>
-                        <i class="bi bi-download me-2"></i> Download CV
                     </a>
                 </div>
             </div>
